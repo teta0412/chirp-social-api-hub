@@ -1,4 +1,3 @@
-
 // User types
 export interface LoginData {
   email: string;
@@ -40,6 +39,7 @@ export interface User {
   followingCount: number;
   followerRequestsCount: number;
   unreadMessagesCount: number;
+  isFollower?: boolean; // Added this property as optional
 }
 
 export interface SimpleUser {
