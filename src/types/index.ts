@@ -1,3 +1,4 @@
+
 // User types
 export interface LoginData {
   email: string;
@@ -59,6 +60,45 @@ export interface SimpleUser {
 export interface AuthResponse {
   user: User;
   token: string;
+}
+
+// Chat related types
+export interface ChatParticipant {
+  id: number;
+  fullName: string;
+  username: string;
+  about: string;
+  avatar: string;
+  isUserBlocked?: boolean;
+  isMyProfileBlocked?: boolean;
+}
+
+export interface ChatMessage {
+  id: number;
+  text: string;
+  createdAt: string;
+  tweet?: {
+    id: number;
+    text: string;
+    authorId: number;
+    authorFullName: string;
+    authorUsername: string;
+    authorAvatar: string;
+  };
+  author: {
+    id: number;
+  };
+  chat: {
+    id: number;
+  };
+}
+
+export interface Chat {
+  id: number;
+  createdAt: string;
+  participants: ChatParticipant[];
+  messages: ChatMessage[];
+  unreadMessagesCount: number;
 }
 
 // Tweet types

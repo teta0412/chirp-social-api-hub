@@ -1,5 +1,4 @@
-
-import { AuthResponse, LoginData, SimpleUser, Tweet, User } from "@/types";
+import { AuthResponse, Chat, ChatMessage, LoginData, SimpleUser, Tweet, User } from "@/types";
 
 const API_BASE_URL = "https://conversely-daring-meerkat.ngrok-free.app/ui/v1";
 
@@ -126,4 +125,37 @@ export const tweetApi = {
 
   getUserTweets: (userId: number, page = 0, size = 20): Promise<Tweet[]> =>
     fetchWithAuth<Tweet[]>(`/tweets/user/${userId}?page=${page}&size=${size}`),
+};
+
+// Chat
+export const chatApi = {
+  getUserChats: (): Promise<Chat[]> =>
+    fetchWithAuth<Chat[]>("/chat/users"),
+
+  getChatById: (chatId: number): Promise<Chat> =>
+    fetchWithAuth<Chat>(`/chat/${chatId}`),
+
+  createChat: (userId: number): Promise<Chat> =>
+    fetchWithAuth<Chat>(`/chat/create/${userId}`),
+
+  sendMessage: (chatId: number, text: string): Promise<ChatMessage> =>
+    fetchWithAuth<ChatMessage>("/chat/messages", {
+      method: "POST",
+      body: JSON.stringify({ chatId, text }),
+    }),
+
+  sendMessageWithTweet: (text: string, tweetId: number, usersIds: number[]): Promise<ChatMessage> =>
+    fetchWithAuth<ChatMessage>("/chat/messages/tweet", {
+      method: "POST",
+      body: JSON.stringify({ text, tweetId, usersIds }),
+    }),
+
+  getChatParticipant: (participantId: number, chatId: number): Promise<SimpleUser> =>
+    fetchWithAuth<SimpleUser>(`/chat/participant/${participantId}/${chatId}`),
+
+  leaveChat: (participantId: number, chatId: number): Promise<string> =>
+    fetchWithAuth<string>(`/chat/leave/${participantId}/${chatId}`),
+
+  searchChatParticipants: (username: string, page = 0, size = 15): Promise<SimpleUser[]> =>
+    fetchWithAuth<SimpleUser[]>(`/chat/participant/search/${username}?page=${page}&size=${size}`),
 };

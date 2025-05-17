@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -66,6 +67,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:userId" element={<Profile />} />
+              <Route path="/messages" element={<Messages />} />
               
               {/* Placeholder routes - we'll implement these later */}
               <Route
@@ -82,15 +84,6 @@ const App = () => {
                 element={
                   <div className="timeline-container p-8">
                     <h1 className="text-2xl font-bold">Notifications</h1>
-                    <p className="mt-4 text-gray-500">Coming soon...</p>
-                  </div>
-                }
-              />
-              <Route
-                path="/messages"
-                element={
-                  <div className="timeline-container p-8">
-                    <h1 className="text-2xl font-bold">Messages</h1>
                     <p className="mt-4 text-gray-500">Coming soon...</p>
                   </div>
                 }
