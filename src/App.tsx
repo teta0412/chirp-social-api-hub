@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
@@ -14,14 +14,20 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+// Authentication wrapper component
+const AuthCheck = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  // Check if user is authenticated on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
+    if (!token && location.pathname !== "/login") {
+      navigate("/login");
+    } else {
+      setIsAuthenticated(!!token);
+    }
+  }, [location, navigate]);
 
   // Show loading state while checking authentication
   if (isAuthenticated === null) {
@@ -32,6 +38,10 @@ const App = () => {
     );
   }
 
+  return <>{children}</>;
+};
+
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -43,87 +53,58 @@ const App = () => {
             <Route
               path="/login"
               element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Auth />
+                localStorage.getItem("token") ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Auth />
+                )
               }
             />
 
             {/* Protected routes */}
-            {isAuthenticated ? (
-              <>
-                <Route
-                  path="/"
-                  element={
-                    <MainLayout>
-                      <Home />
-                    </MainLayout>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <MainLayout>
-                      <Profile />
-                    </MainLayout>
-                  }
-                />
-                <Route
-                  path="/profile/:userId"
-                  element={
-                    <MainLayout>
-                      <Profile />
-                    </MainLayout>
-                  }
-                />
-                {/* Placeholder routes - we'll implement these later */}
-                <Route
-                  path="/explore"
-                  element={
-                    <MainLayout>
-                      <div className="timeline-container p-8">
-                        <h1 className="text-2xl font-bold">Explore</h1>
-                        <p className="mt-4 text-gray-500">Coming soon...</p>
-                      </div>
-                    </MainLayout>
-                  }
-                />
-                <Route
-                  path="/notifications"
-                  element={
-                    <MainLayout>
-                      <div className="timeline-container p-8">
-                        <h1 className="text-2xl font-bold">Notifications</h1>
-                        <p className="mt-4 text-gray-500">Coming soon...</p>
-                      </div>
-                    </MainLayout>
-                  }
-                />
-                <Route
-                  path="/messages"
-                  element={
-                    <MainLayout>
-                      <div className="timeline-container p-8">
-                        <h1 className="text-2xl font-bold">Messages</h1>
-                        <p className="mt-4 text-gray-500">Coming soon...</p>
-                      </div>
-                    </MainLayout>
-                  }
-                />
-                <Route
-                  path="/bookmarks"
-                  element={
-                    <MainLayout>
-                      <div className="timeline-container p-8">
-                        <h1 className="text-2xl font-bold">Bookmarks</h1>
-                        <p className="mt-4 text-gray-500">Coming soon...</p>
-                      </div>
-                    </MainLayout>
-                  }
-                />
-              </>
-            ) : (
-              // Redirect all protected routes to login when not authenticated
-              <Route path="*" element={<Navigate to="/login" replace />} />
-            )}
+            <Route element={<AuthCheck><MainLayout /></AuthCheck>}>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:userId" element={<Profile />} />
+              
+              {/* Placeholder routes - we'll implement these later */}
+              <Route
+                path="/explore"
+                element={
+                  <div className="timeline-container p-8">
+                    <h1 className="text-2xl font-bold">Explore</h1>
+                    <p className="mt-4 text-gray-500">Coming soon...</p>
+                  </div>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <div className="timeline-container p-8">
+                    <h1 className="text-2xl font-bold">Notifications</h1>
+                    <p className="mt-4 text-gray-500">Coming soon...</p>
+                  </div>
+                }
+              />
+              <Route
+                path="/messages"
+                element={
+                  <div className="timeline-container p-8">
+                    <h1 className="text-2xl font-bold">Messages</h1>
+                    <p className="mt-4 text-gray-500">Coming soon...</p>
+                  </div>
+                }
+              />
+              <Route
+                path="/bookmarks"
+                element={
+                  <div className="timeline-container p-8">
+                    <h1 className="text-2xl font-bold">Bookmarks</h1>
+                    <p className="mt-4 text-gray-500">Coming soon...</p>
+                  </div>
+                }
+              />
+            </Route>
 
             {/* 404 route */}
             <Route path="*" element={<NotFound />} />
