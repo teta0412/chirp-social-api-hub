@@ -1,7 +1,7 @@
 
-import { AuthResponse, LoginData, Tweet, User } from "@/types";
+import { AuthResponse, LoginData, SimpleUser, Tweet, User } from "@/types";
 
-const API_BASE_URL = "https://api-example.com/ui/v1";
+const API_BASE_URL = "https://conversely-daring-meerkat.ngrok-free.app/ui/v1";
 
 // Utility function to handle fetch requests
 async function fetchWithAuth<T>(
