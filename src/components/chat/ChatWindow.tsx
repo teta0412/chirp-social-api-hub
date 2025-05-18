@@ -22,7 +22,7 @@ const ChatWindow = ({ chat, onMessageSent }: ChatWindowProps) => {
   const currentUser: User = JSON.parse(localStorage.getItem("user") || "{}");
   
   // Get the other participant (for 1:1 chats)
-  const otherParticipant = chat.participants.find(p => p.id !== currentUser.id) || chat.participants[0];
+  const otherParticipant = chat.participants.find(p => p.user.id !== currentUser.id).user;
 
   // Fetch the latest chat data to ensure we have all messages
   const { data: currentChat } = useQuery({
@@ -30,6 +30,13 @@ const ChatWindow = ({ chat, onMessageSent }: ChatWindowProps) => {
     queryFn: () => chatApi.getChatById(chat.id),
     initialData: chat,
   });
+
+  const { data: messages, refetch: refetchMessages } = useQuery({
+    queryKey: ['chat-messages', chat.id],
+    queryFn: () => chatApi.getChatMessages(chat.id),
+    initialData: [],
+  });
+  currentChat.messages = messages;
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -45,6 +52,7 @@ const ChatWindow = ({ chat, onMessageSent }: ChatWindowProps) => {
     try {
       await chatApi.sendMessage(chat.id, messageText);
       setMessageText("");
+      await refetchMessages(); // Refetch messages after sending
       onMessageSent();
     } catch (error) {
       console.error("Failed to send message:", error);

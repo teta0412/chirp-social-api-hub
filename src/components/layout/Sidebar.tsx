@@ -27,11 +27,6 @@ export function Sidebar() {
       href: "/",
     },
     {
-      label: "Explore",
-      icon: Search,
-      href: "/explore",
-    },
-    {
       label: "Notifications",
       icon: Bell,
       href: "/notifications",
@@ -40,11 +35,6 @@ export function Sidebar() {
       label: "Messages",
       icon: Mail,
       href: "/messages",
-    },
-    {
-      label: "Bookmarks",
-      icon: Bookmark,
-      href: "/bookmarks",
     },
     {
       label: "Profile",

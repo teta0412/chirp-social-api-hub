@@ -3,6 +3,8 @@ import { Chat } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { chatApi } from "@/lib/api";
 
 interface ConversationListProps {
   chats: Chat[];
@@ -14,11 +16,17 @@ const ConversationList = ({ chats, selectedChatId, onSelectChat }: ConversationL
   // Helper function to get the other participant (for 1:1 chats)
   const getOtherParticipant = (chat: Chat) => {
     const currentUserId = JSON.parse(localStorage.getItem("user") || "{}")?.id;
-    return chat.participants.find(p => p.id !== currentUserId) || chat.participants[0];
+    return chat.participants.find(p => p.user.id !== currentUserId);
   };
 
   // Helper function to get the last message preview
   const getLastMessagePreview = (chat: Chat) => {
+    const { data: messages } = useQuery({
+      queryKey: ['chat-messages', chat.id],
+      queryFn: () => chatApi.getChatMessages(chat.id),
+      initialData: [],
+    });
+    chat.messages = messages;
     if (!chat.messages || chat.messages.length === 0) return "No messages yet";
     const lastMessage = chat.messages[chat.messages.length - 1];
     return lastMessage.tweet 
@@ -34,7 +42,7 @@ const ConversationList = ({ chats, selectedChatId, onSelectChat }: ConversationL
         </div>
       ) : (
         chats.map(chat => {
-          const otherUser = getOtherParticipant(chat);
+          const otherUser = getOtherParticipant(chat).user;
           const lastMessageTime = chat.messages && chat.messages.length > 0
             ? new Date(chat.messages[chat.messages.length - 1].createdAt)
             : new Date(chat.createdAt);

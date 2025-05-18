@@ -1,6 +1,6 @@
 import { AuthResponse, Chat, ChatMessage, LoginData, SimpleUser, Tweet, User } from "@/types";
 
-const API_BASE_URL = "https://conversely-daring-meerkat.ngrok-free.app/ui/v1";
+const API_BASE_URL = "http://localhost:8000/ui/v1";
 
 // Utility function to handle fetch requests
 async function fetchWithAuth<T>(
@@ -8,9 +8,11 @@ async function fetchWithAuth<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("user-id");
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(userId ? { "X-auth-user-Id": userId } : {}),
     ...options.headers,
   };
 
@@ -24,7 +26,7 @@ async function fetchWithAuth<T>(
     throw new Error(error.message || "Something went wrong");
   }
 
-  return response.json();
+  return await response.json();
 }
 
 // Authentication
@@ -135,11 +137,14 @@ export const chatApi = {
   getChatById: (chatId: number): Promise<Chat> =>
     fetchWithAuth<Chat>(`/chat/${chatId}`),
 
+  getChatMessages: (chatId: number): Promise<ChatMessage[]> =>
+    fetchWithAuth<ChatMessage[]>(`/chat/${chatId}/messages`),
+
   createChat: (userId: number): Promise<Chat> =>
     fetchWithAuth<Chat>(`/chat/create/${userId}`),
 
   sendMessage: (chatId: number, text: string): Promise<ChatMessage> =>
-    fetchWithAuth<ChatMessage>("/chat/messages", {
+    fetchWithAuth<ChatMessage>("/chat/add/message", {
       method: "POST",
       body: JSON.stringify({ chatId, text }),
     }),

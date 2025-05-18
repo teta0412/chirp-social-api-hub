@@ -20,6 +20,7 @@ export function LoginForm({ onLoginSuccess }: { onLoginSuccess: () => void }) {
       const response = await authApi.login({ email, password });
       localStorage.setItem("token", response.token);
       localStorage.setItem("user", JSON.stringify(response.user));
+      localStorage.setItem("user-id", response.user.id.toString());
       toast({
         title: "Login Successful",
         description: `Welcome back, ${response.user.fullName}!`,

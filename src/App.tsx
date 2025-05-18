@@ -69,30 +69,11 @@ const App = () => {
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/messages" element={<Messages />} />
               
-              {/* Placeholder routes - we'll implement these later */}
-              <Route
-                path="/explore"
-                element={
-                  <div className="timeline-container p-8">
-                    <h1 className="text-2xl font-bold">Explore</h1>
-                    <p className="mt-4 text-gray-500">Coming soon...</p>
-                  </div>
-                }
-              />
               <Route
                 path="/notifications"
                 element={
                   <div className="timeline-container p-8">
                     <h1 className="text-2xl font-bold">Notifications</h1>
-                    <p className="mt-4 text-gray-500">Coming soon...</p>
-                  </div>
-                }
-              />
-              <Route
-                path="/bookmarks"
-                element={
-                  <div className="timeline-container p-8">
-                    <h1 className="text-2xl font-bold">Bookmarks</h1>
                     <p className="mt-4 text-gray-500">Coming soon...</p>
                   </div>
                 }

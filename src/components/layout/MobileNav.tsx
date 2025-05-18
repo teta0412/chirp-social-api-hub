@@ -20,17 +20,6 @@ export function MobileNav() {
       </Link>
       
       <Link 
-        to="/explore" 
-        className={cn(
-          "flex flex-col items-center text-gray-500",
-          currentPath === "/explore" && "text-twitter-primary"
-        )}
-      >
-        <Search size={24} />
-        <span className="text-xs">Explore</span>
-      </Link>
-      
-      <Link 
         to="/notifications" 
         className={cn(
           "flex flex-col items-center text-gray-500",
