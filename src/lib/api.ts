@@ -164,3 +164,26 @@ export const chatApi = {
   searchChatParticipants: (username: string, page = 0, size = 15): Promise<SimpleUser[]> =>
     fetchWithAuth<SimpleUser[]>(`/chat/participant/search/${username}?page=${page}&size=${size}`),
 };
+
+// Image Upload
+export const imageApi = {
+  uploadImage: (file: File): Promise<{ id: number, src: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return fetch(`${API_BASE_URL}/tweets/upload`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }).then(response => {
+      if (!response.ok) {
+        return response.json().then(error => {
+          throw new Error(error.message || 'Failed to upload image');
+        });
+      }
+      return response.json();
+    });
+  },
+};

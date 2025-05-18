@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Tweet } from "@/types";
@@ -17,12 +16,10 @@ export function TweetCard({ tweet, onTweetUpdate }: TweetCardProps) {
   const [isRetweeted, setIsRetweeted] = useState(tweet.isTweetRetweeted);
   const [likesCount, setLikesCount] = useState(tweet.likesCount);
   const [retweetsCount, setRetweetsCount] = useState(tweet.retweetsCount);
-  
+  const userId = localStorage.getItem("user-id")
   const handleLike = async () => {
     try {
-      // In production, get the actual user ID from auth context or localStorage
-      const userId = 1; // This is a placeholder
-      await tweetApi.likeTweet(userId, tweet.id);
+      await tweetApi.likeTweet(parseInt(userId), tweet.id);
       
       const newLikeStatus = !isLiked;
       setIsLiked(newLikeStatus);
@@ -42,9 +39,7 @@ export function TweetCard({ tweet, onTweetUpdate }: TweetCardProps) {
   
   const handleRetweet = async () => {
     try {
-      // In production, get the actual user ID from auth context or localStorage
-      const userId = 1; // This is a placeholder
-      await tweetApi.retweetTweet(userId, tweet.id);
+      await tweetApi.retweetTweet(parseInt(userId), tweet.id);
       
       const newRetweetStatus = !isRetweeted;
       setIsRetweeted(newRetweetStatus);
@@ -112,8 +107,8 @@ export function TweetCard({ tweet, onTweetUpdate }: TweetCardProps) {
                   key={image.id}
                   src={image.src} 
                   alt={`Tweet image ${index + 1}`}
-                  className="rounded-lg w-full h-auto object-cover"
-                  style={{ maxHeight: tweet.images.length === 1 ? '350px' : '200px' }}
+                  className="rounded-lg w-full h-auto object-contain"
+                  style={{ maxHeight: tweet.images.length === 1 ? '400px' : '250px' }}
                 />
               ))}
             </div>
