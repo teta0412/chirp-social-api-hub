@@ -1,6 +1,6 @@
 import { AuthResponse, Chat, ChatMessage, LoginData, SimpleUser, Tweet, User } from "@/types";
 
-const API_BASE_URL = "http://localhost:8000/ui/v1";
+export const API_BASE_URL = "http://localhost:8000/ui/v1";
 
 // Utility function to handle fetch requests
 async function fetchWithAuth<T>(
@@ -162,7 +162,7 @@ export const chatApi = {
     fetchWithAuth<string>(`/chat/leave/${participantId}/${chatId}`),
 
   searchChatParticipants: (username: string, page = 0, size = 15): Promise<SimpleUser[]> =>
-    fetchWithAuth<SimpleUser[]>(`/chat/participant/search/${username}?page=${page}&size=${size}`),
+    fetchWithAuth<SimpleUser[]>(`/chat/items/search/${username}?page=${page}&size=${size}`),
 };
 
 // Image Upload
@@ -186,4 +186,22 @@ export const imageApi = {
       return response.json();
     });
   },
+};
+
+// Notification
+export const notificationApi = {
+  getNotifications: (page = 0, size = 20): Promise<any[]> =>
+    fetchWithAuth<any[]>(`/notification/user?page=${page}&size=${size}`),
+
+  getMentions: (page = 0, size = 20): Promise<Tweet[]> =>
+    fetchWithAuth<Tweet[]>(`/notification/mentions?page=${page}&size=${size}`),
+
+  getSubscribes: (): Promise<any[]> =>
+    fetchWithAuth<any[]>(`/notification/subscribes`),
+
+  getNotificationById: (notificationId: number): Promise<any> =>
+    fetchWithAuth<any>(`/notification/${notificationId}`),
+
+  getTimeline: (page = 0, size = 20): Promise<Tweet[]> =>
+    fetchWithAuth<Tweet[]>(`/notification/timeline?page=${page}&size=${size}`),
 };

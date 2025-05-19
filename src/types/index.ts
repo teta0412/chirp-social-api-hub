@@ -167,3 +167,48 @@ export interface Tweet {
   isTweetDeleted?: boolean;
   isTweetBookmarked?: boolean;
 }
+
+export enum NotificationType {
+  LIKE = "LIKE",
+  RETWEET = "RETWEET",
+  REPLY = "REPLY",
+  FOLLOW = "FOLLOW",
+  MENTION = "MENTION",
+  TWEET = "TWEET",
+  LISTS = "LISTS"
+}
+
+export interface NotificationUser {
+  id: number;
+  username: string;
+  avatar: string;
+  follower?: boolean;
+}
+
+export interface NotificationTweet {
+  id: number;
+  text: string;
+  notificationCondition: boolean;
+  author: {
+    id: number;
+    username: string;
+    avatar: string;
+  };
+}
+
+export interface NotificationList {
+  id: number;
+  listName: string;
+}
+
+export interface Notification {
+  id: number;
+  date: string;
+  notificationType: NotificationType;
+  notifiedUser: NotificationUser;
+  user: NotificationUser;
+  userToFollow?: NotificationUser;
+  tweet?: NotificationTweet;
+  list?: NotificationList;
+  isAddedToList?: boolean;
+}

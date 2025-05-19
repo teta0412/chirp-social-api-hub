@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -12,6 +11,9 @@ import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import { Notifications } from "./pages/Notification";
+import { NotificationProvider } from "./NotificationContext"
+import { websocketService } from "./service/websocket";
 
 const queryClient = new QueryClient();
 
@@ -42,9 +44,25 @@ const AuthCheck = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Add a new component to manage WebSocket connection
+const WebSocketManager = ({ children }: { children: React.ReactNode }) => {
+  useEffect(() => {
+    // Connect to WebSocket when component mounts (user is authenticated)
+    websocketService.connect();
+    
+    // Disconnect when component unmounts (user logs out)
+    return () => {
+      websocketService.disconnect();
+    };
+  }, []);
+
+  return <>{children}</>;
+};
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <NotificationProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -63,21 +81,18 @@ const App = () => {
             />
 
             {/* Protected routes */}
-            <Route element={<AuthCheck><MainLayout /></AuthCheck>}>
+            <Route element={
+              <AuthCheck>
+                <WebSocketManager>
+                  <MainLayout />
+                </WebSocketManager>
+              </AuthCheck>
+            }>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/messages" element={<Messages />} />
-              
-              <Route
-                path="/notifications"
-                element={
-                  <div className="timeline-container p-8">
-                    <h1 className="text-2xl font-bold">Notifications</h1>
-                    <p className="mt-4 text-gray-500">Coming soon...</p>
-                  </div>
-                }
-              />
+              <Route path="/notifications" element={<Notifications />} />
             </Route>
 
             {/* 404 route */}
@@ -85,6 +100,7 @@ const App = () => {
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </NotificationProvider>
     </QueryClientProvider>
   );
 };

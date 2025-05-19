@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Chat, User } from "@/types";
@@ -50,10 +49,14 @@ const ChatWindow = ({ chat, onMessageSent }: ChatWindowProps) => {
     if (!messageText.trim()) return;
     
     try {
-      await chatApi.sendMessage(chat.id, messageText);
+      const messageToSend = messageText;
       setMessageText("");
-      await refetchMessages(); // Refetch messages after sending
-      onMessageSent();
+      await chatApi.sendMessage(chat.id, messageToSend);
+      
+      setTimeout(async () => {
+        await refetchMessages();
+        onMessageSent();
+      }, 300);
     } catch (error) {
       console.error("Failed to send message:", error);
     }
